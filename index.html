@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Countdown for Carolina 💝</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    /* Background with distortion */
+    .bg {
+      position: fixed;
+      inset: 0;
+      background-image: url("carolina-photo.jpg"); /* ← change this line */
+      background-size: cover;
+      background-position: center;
+      filter: contrast(1.05) saturate(1.15);
+      animation: subtleDistort 12s ease-in-out infinite alternate;
+    }
+
+    .bg::before,
+    .bg::after {
+      content: "";
+      position: absolute;
+      inset: -10px;
+      background-image: inherit;
+      background-size: inherit;
+      background-position: inherit;
+      mix-blend-mode: screen;
+      opacity: 0.18;
+      pointer-events: none;
+      animation: glitch 3.5s infinite;
+    }
+
+    .bg::after {
+      mix-blend-mode: soft-light;
+      opacity: 0.14;
+      animation-duration: 4.6s;
+    }
+
+    @keyframes subtleDistort {
+      0% {
+        transform: scale(1) translate(0, 0);
+        filter: contrast(1.05) saturate(1.15) hue-rotate(0deg);
+      }
+      50% {
+        transform: scale(1.03) translate(-6px, -4px);
+        filter: contrast(1.08) saturate(1.22) hue-rotate(-6deg);
+      }
+      100% {
+        transform: scale(1.02) translate(4px, 3px);
+        filter: contrast(1.06) saturate(1.18) hue-rotate(5deg);
+      }
+    }
+
+    @keyframes glitch {
+      0%, 5%, 100% {
+        clip-path: inset(0 0 0 0);
+        transform: translate(0, 0);
+      }
+      10% {
+        clip-path: inset(12% 0 55% 0);
+        transform: translate(-8px, -2px);
+      }
+      15% {
+        clip-path: inset(38% 0 25% 0);
+        transform: translate(4px, 2px);
+      }
+      20% {
+        clip-path: inset(80% 0 0 0);
+        transform: translate(-3px, 3px);
+      }
+      25% {
+        clip-path: inset(0 0 0 0);
+        transform: translate(0, 0);
+      }
+    }
+
+    /* Centered card content */
+    .overlay {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: radial-gradient(circle at top, rgba(0,0,0,0.45), rgba(0,0,0,0.7));
+    }
+
+    .card {
+      width: 100%;
+      max-width: 430px;
+      padding: 2.2rem 1.9rem;
+      border-radius: 1.6rem;
+      background: rgba(10, 10, 25, 0.7);
+      box-shadow: 0 22px 60px rgba(0,0,0,0.65);
+      backdrop-filter: blur(14px);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      margin-bottom: 0.3rem;
+    }
+
+    p.subtitle {
+      margin-bottom: 1.7rem;
+      color: #f3e6ff;
+      font-size: 0.98rem;
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 0.9rem;
+      margin-bottom: 1.6rem;
+      flex-wrap: wrap;
+    }
+
+    .unit {
+      flex: 1 1 70px;
+      min-width: 70px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 1rem;
+      padding: 0.8rem 0.7rem;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .value {
+      font-size: 1.7rem;
+      font-weight: 700;
+    }
+
+    .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.15rem;
+      opacity: 0.8;
+    }
+
+    .message {
+      font-size: 0.95rem;
+      color: #f9f3ff;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+
+  <div class="overlay">
+    <div class="card">
+      <h1>A pior prenda do mundo para a minha irmã</h1>
+      <p class="subtitle">Por isso mesmo a prenda está atrasada 🥳</p>
+
+      <div class="countdown" id="countdown">
+        <div class="unit">
+          <div class="value" id="days">0</div>
+          <div class="label">Days</div>
+        </div>
+        <div class="unit">
+          <div class="value" id="hours">0</div>
+          <div class="label">Hours</div>
+        </div>
+        <div class="unit">
+          <div class="value" id="minutes">0</div>
+          <div class="label">Minutes</div>
+        </div>
+        <div class="unit">
+          <div class="value" id="seconds">0</div>
+          <div class="label">Seconds</div>
+        </div>
+      </div>
+
+      <p class="message" id="message">
+        Falta ainda tanto tempo... 💗😌
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Countdown target: 20 December 2025 at 20:00
+    const targetDate = new Date("December 20, 2025 20:00:00").getTime();
+
+    const countdownEl = document.getElementById("countdown");
+    const messageEl = document.getElementById("message");
+
+    const daysEl = document.getElementById("days");
+    const hoursEl = document.getElementById("hours");
+    const minutesEl = document.getElementById("minutes");
+    const secondsEl = document.getElementById("seconds");
+
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        clearInterval(timer);
+        countdownEl.style.display = "none";
+        messageEl.textContent = "It is time for your gift, Carolina! 🎉";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor(
+        (distance % (1000 * 60 * 60)) / (1000 * 60)
+      );
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      daysEl.textContent = days;
+      hoursEl.textContent = hours.toString().padStart(2, "0");
+      minutesEl.textContent = minutes.toString().padStart(2, "0");
+      secondsEl.textContent = seconds.toString().padStart(2, "0");
+    }, 1000);
+  </script>
+</body>
+</html>
